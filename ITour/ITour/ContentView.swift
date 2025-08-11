@@ -10,50 +10,44 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
-    @Query var destinations : [Destination]
+    
     @State private var path = [Destination]()
+    @State private var sortOrder = SortDescriptor(\Destination.name)
+    @State private var searchText = ""
     
     var body: some View {
         NavigationStack(path: $path ){
-            List{
-                ForEach(destinations){
-                    destination in
-                    NavigationLink(value: destination{
-                        
-                        VStack(alignment: .leading){
-                            Text(destination.name)
-                                .font(.headline)
-                            Text(destination.date.formatted(date:.long, time: .shortened))
+            DestinationListingView(sort: sortOrder)
+                .navigationTitle("ITour")
+                .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
+                .searchable(text: $searchText)
+                .toolbar{
+                   Button("Add Destination", systemImage: "plus", action: addDestination)
+                    
+                    Menu("Sort", systemImage: "arrow.up.arrow.down"){
+                        Picker("Sort", selection: $sortOrder){
+                            Text("Name")
+                                .tag(SortDescriptor(\Destination.name))
+                            Text("Priority")
+                                .tag(SortDescriptor(\Destination.priority, order: .reverse))
+                            Text("Date")
+                                .tag(SortDescriptor(\Destination.date))
                         }
+                        .pickerStyle(.inline)
                     }
-                }
-                .onDelete(perform: deleteDestination n )
-            }
-            .navigationTitle("ITour")
-            .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
-            .toolbar{
-                Button("Add Sample",action: addSample)
-                Button("Add Destination", systemImage: "plus"),action: addDestination)
             }
         }
     }
     
 
-    
     func addDestination(){
-        let destination = Destination
+        let destination = Destination()
         modelContext.insert(destination)
         path = [destination]
     }
     
     
-    func deleteDestination(_ indexSet: IndexSet){
-        for index in indexSet{
-            let destinationToDelete = destinations[index]
-            modelContext.delete(destinationToDelete)
-        }
-        
-    }
+    
 }
 
 #Preview {

@@ -31,15 +31,14 @@ struct EditDestinationView: View {
 }
 
 #Preview {
-    do{
+    do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Destination.self, congiuration: config)
-        let example = Destination(name: "Example Destination", details: "Example destination detail goes here")
-        
-        EditDestinationView(Destination: example)
+        let container = try ModelContainer(for: Destination.self, configurations: config)
+        let example = Destination(name: "Example Destination", details: "Example details go here and will automatically expand vertically as they are edited.")
+        return EditDestinationView(destination: example)
             .modelContainer(container)
-    }catch{
-        fatalError("Unable to create preview view: \(error)")
+    } catch {
+        fatalError("Failed to create model container.")
     }
 }
  
