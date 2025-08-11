@@ -17,7 +17,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack(path: $path ){
-            DestinationListingView(sort: sortOrder)
+            DestinationListingView(sort: sortOrder,searchString: searchText)
                 .navigationTitle("ITour")
                 .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
                 .searchable(text: $searchText)
